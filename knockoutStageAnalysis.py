@@ -1,11 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-knockout_stage_dataset = pd.read_csv("/home/bawbaw31/Documents/datasets/LOL Worlds 2018 Knockout stage - Player Ratings.csv")
-
-knockout_stage_dataset = knockout_stage_dataset.rename(columns={"Kills(Total)": "Kills Total",
-"Assists(Total)": "Assists", "CS(Per Minute)": "CS Per Minute",
-"CS(Total)": "CS Total", "Deaths(Total)": "Deaths",})
+knockout_stage_dataset = pd.read_csv("./datasets/knockout_stage_cleaned.csv")
 
 # My team stats
 team_stats = knockout_stage_dataset[(knockout_stage_dataset["Team"] == "G2")].reset_index().sort_values(by=['Position'])
@@ -63,4 +59,39 @@ def knockoutBarGraphByStat(stat):
     ax.legend(handles, labels)
 
     # ax.savefig('graph_' + stat + '.png')
+    return fig
+
+def knockoutBarGraphByStatByPosition(position, stat):
+    fig = plt.figure()
+    ax = fig.add_axes([0,0,1,1])
+
+    barWidth = 0.4
+    y1 = mean_stats_by_position[(mean_stats_by_position['Position'] == position)][stat]
+    y2 = team_stats[(team_stats['Position'] == position)][stat]
+    r1 = range(len(y1))
+    r2 = [x + barWidth for x in r1]
+
+    # Bar Graph
+    ax.bar(r1, y1, width = barWidth, color = ['yellow' for i in y1], linewidth = 2)
+    ax.bar(r2, y2, width = barWidth, color = ['pink' for i in y1], linewidth = 4)
+    ax.set_xticks([r + barWidth / 2 for r in r1], [position])
+    
+    # Error Bar
+    error = []
+    stats_by_position = getStatByTeamByPosition(position, stat)
+    error.append(stats_by_position.std())
+    ax.errorbar([position], y1, yerr=error, fmt="o", color="r")
+
+    # Title & Labels
+    # ax.title(stat + ' in ' + position + ' position : Mean vs Team')
+    ax.set_xlabel('Position')
+    ax.set_ylabel(stat)
+    
+    # Legend
+    colors = {'Other teams':'yellow', 'G2':'pink'}
+    labels = list(colors.keys())
+    handles = [plt.Rectangle((0,0),1,1, color=colors[label]) for label in labels]
+    ax.legend(handles, labels)
+
+    # ax.savefig('graph_' + stat + '_' + position + '.png')
     return fig
