@@ -48,7 +48,7 @@ def getStatByTeamByPosition(position, stat):
 mean_stats_by_position = mean_stats_by_team_by_position.groupby(["Position"]).mean().round(1).reset_index().sort_values(by=['Position'])
 
 # Create graph function
-def barGraphByStat(stat):
+def groupBarGraphByStat(stat):
     fig = plt.figure()
     ax = fig.add_axes([0,0,1,1])
     # ax.set_facecolor('xkcd:salmon')
