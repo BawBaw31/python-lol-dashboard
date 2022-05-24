@@ -2,18 +2,29 @@ import streamlit as st
 from groupStageAnalysis import *
 from knockoutStageAnalysis import *
 
-# TODO : delete lorem
-lorem = "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi Player oluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
-team_text = """Pour la réalisation de ce dashboard, j'ai manipulé deux Datasets : 
-    [Group Stage Dataset](https://www.kaggle.com/kaggle/soccer-dataset/data) et 
-    [Knockout Stage Dataset](https://www.kaggle.com/kaggle/soccer-dataset/data).  
+team_text = """Pour la réalisation de ce dashboard, j'ai manipulé deux Datasets :  
+    [Group Stage Dataset](https://www.kaggle.com/datasets/kaushikburra/lol-worlds-2018-groups-stage-player-ratings) & 
+    [Knockout Stage Dataset](https://www.kaggle.com/datasets/kaushikburra/lol-worlds-2018-knockout-stage-player-ratings).  
     Ceux-ci contiennent des données tirées d’une compétition mondiale du jeu vidéo 
     **“League of Legends”** qui à eu lieu en **2018**.  
-    Les tableaux montrent des données par joueur : 
+    Les tableaux montrent des statistiques par joueur : 
     nombre de morts, nombre d’assassinat, et pleins d’autres métriques propres au jeu.  
     Les deux Datasets suivent le même schéma de données :  
-    l’un est à propos de la **phase de “Pools”**, 
-    l’autre des **phases “Éliminatoires”**."""
+    l'un est à propos de la **phase de “Pools”**, 
+    l'autre de la **phase “Éliminatoire”**.  
+    J'ai fait le choix de suivre l'équipe **G2** afin de donner un retour sur la performance 
+    des joueurs de cette équipe."""
+
+def players_text(player):
+    adj = "au "
+    position = player_position[player]
+    if position == "ADC":
+        adj = "en tant qu'"
+    elif position == "Support":
+        adj = "en tant que "
+    elif position == "Jungle":
+        adj = "en "
+    return f"<h3 style='text-align: center;'>Ici vous pouvez voir la progression de {player}qui évolue {adj}{position}!</h3>"
 
 team_players = ("Hjärnan", "Jankos", "Perkz", "Wadid", "Wunder")
 player_position = {
@@ -33,27 +44,26 @@ def player_metric(player, metric, old=None):
 
 
 def player_metric_dif(player, metric):
-    return float(player_metric(player, metric, True)) - float(player_metric(player, metric))
+    return float(player_metric(player, metric)) - float(player_metric(player, metric, True))
 
-
+# Streamlit Frontend
 st.set_page_config(
     layout="wide",
 )
 
-a, b, c, d, e, f = st.columns(6)
+a, b, c = st.columns([1.5, 0.5, 4])
 
-a.title("Dashboard")
-page = b.selectbox('', options=['Team', 'Player'])
+a.title("G2 Esport Dashboard")
+page = b.selectbox('', options=['Team', 'Joueurs'])
 
 if page == 'Team':
-    st.subheader("Team stats against competition mean stats")
 
-    c1, c2, c3 = st.columns(3)
-
-    option = c1.selectbox('', ('Group phase', 'Knockout'))
+    c1, c2 = st.columns([1, 2])
+    option = c1.selectbox('', ('Phase de Pool', 'Phase Eliminatoire'))
+    c2.markdown("<h3 style='text-align: center;'>Statistiques de l'équipe G2 par rapport aux statistiques moyennes de la compétition</h3>", unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns(3)
-    barGraphByStat = groupBarGraphByStat if option == 'Group phase'else knockoutBarGraphByStat
+    barGraphByStat = groupBarGraphByStat if option == 'Phase de Pool'else knockoutBarGraphByStat
     with col1:
         st.pyplot(barGraphByStat('KDA Ratio'))
         st.pyplot(barGraphByStat('Kill Participation'))
@@ -64,10 +74,10 @@ if page == 'Team':
         st.pyplot(barGraphByStat('CS Per Minute'))
         st.markdown(team_text)
 
-elif page == 'Player':
+elif page == 'Joueurs':
     c1, c2 = st.columns([2, 4])
-    player = c1.selectbox('Player', team_players)
-    c2.markdown(lorem)
+    player = c1.selectbox('Joueur', team_players)
+    c2.markdown(players_text(player), unsafe_allow_html=True)
 
     d1, z, d2, d3, d4, d5, d6 = st.columns([0.5, 1, 1, 1, 1, 1, 1])
     d1.image(f"images/{player.lower()}.png")
@@ -78,14 +88,16 @@ elif page == 'Player':
     d4.metric(metrics[2], player_metric(player, 2),
               round(player_metric_dif(player, 2), 0))
     d5.metric(metrics[3], player_metric(player, 3),
-              round(player_metric_dif(player, 3), 0))
+              round(player_metric_dif(player, 3), 0), "inverse")
     d6.metric(metrics[4], player_metric(player, 4),
               round(player_metric_dif(player, 4), 1))
 
     e1, e2 = st.columns([2, 4])
-    metric = e1.selectbox('Metric', metrics)
+    metric = e1.selectbox('Statistique', metrics)
 
     f1, f0, f2 = st.columns([2, 0.5, 2])
-    f2.pyplot(groupBarGraphByStatByPosition(player_position[player], metric))
-    f1.pyplot(knockoutBarGraphByStatByPosition(
+    f1.markdown("<h3 style='text-align: center;'>Phase de Pool</h3>", unsafe_allow_html=True)
+    f1.pyplot(groupBarGraphByStatByPosition(player_position[player], metric))
+    f2.markdown("<h3 style='text-align: center;'>Phase Eliminatoire</h3>", unsafe_allow_html=True)
+    f2.pyplot(knockoutBarGraphByStatByPosition(
         player_position[player], metric))
