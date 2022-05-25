@@ -16,4 +16,4 @@ EXPOSE 8501
 
 ENTRYPOINT [ "streamlit", "run" ]
 
-CMD [ "test.py" ]
+CMD [ "main.py" ]

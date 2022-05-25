@@ -64,7 +64,7 @@ def groupBarGraphByStat(stat):
         stats_by_position = getStatByTeamByPosition(position, stat)
         error.append(stats_by_position.std())
     ax.errorbar(mean_stats_by_position['Position'],
-                y1, yerr=error, fmt="o", color="r")
+                y1, yerr=error, fmt="o", color="black")
 
     # Title & Labels
     # ax.set_title(stat + " Per Position")
@@ -102,7 +102,7 @@ def groupBarGraphByStatByPosition(position, stat):
     error = []
     stats_by_position = getStatByTeamByPosition(position, stat)
     error.append(stats_by_position.std())
-    ax.errorbar([position], y1, yerr=error, fmt="o", color="r")
+    ax.errorbar([position], y1, yerr=error, fmt="o", color="black")
 
     # Title & Labels
     # ax.title(stat + ' in ' + position + ' position : Mean vs Team')

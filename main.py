@@ -60,7 +60,9 @@ if page == 'Team':
 
     c1, c2 = st.columns([1, 2])
     option = c1.selectbox('', ('Phase de Pool', 'Phase Eliminatoire'))
-    c2.markdown("<h3 style='text-align: center;'>Statistiques de l'équipe G2 par rapport aux statistiques moyennes de la compétition</h3>", unsafe_allow_html=True)
+
+    st.markdown("<h3 style='text-align: center;'>Statistiques de l'équipe G2 par rapport aux statistiques moyennes de la compétition</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; font-size: 20px; font-style: italic;'>(KDA, Kill Participation, Assists, Deaths, CS/min)</p>", unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns(3)
     barGraphByStat = groupBarGraphByStat if option == 'Phase de Pool'else knockoutBarGraphByStat
