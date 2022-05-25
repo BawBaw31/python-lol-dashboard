@@ -24,7 +24,7 @@ def players_text(player):
         adj = "en tant que "
     elif position == "Jungle":
         adj = "en "
-    return f"<h3 style='text-align: center;'>Ici vous pouvez voir la progression de {player}qui évolue {adj}{position}!</h3>"
+    return f"<h3 style='text-align: center;'>Ici vous pouvez voir la progression de {player} qui évolue {adj}{position}!</h3>"
 
 team_players = ("Hjärnan", "Jankos", "Perkz", "Wadid", "Wunder")
 player_position = {

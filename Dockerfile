@@ -2,7 +2,7 @@ FROM python:3.8
 
 RUN pip3 install streamlit && pip3 install pandas && pip3 install matplotlib
 
-COPY test.py .
+COPY main.py .
 
 COPY groupStageAnalysis.py .
 
